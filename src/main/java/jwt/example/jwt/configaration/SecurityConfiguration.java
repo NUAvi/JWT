@@ -1,7 +1,7 @@
 package jwt.example.jwt.configaration;
 
+import jwt.example.jwt.filter.JwtFilter;
 import jwt.example.jwt.service.UserService;
-import lombok.experimental.SuperBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserService userService;
+    @Autowired
+    private JwtFilter jwtFilter;
     @Override
     protected void configure(AuthenticationManagerBuilder auth)throws Exception{
         auth.userDetailsService(userService);
@@ -35,10 +37,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/authenticate")
                 .permitAll()
                 .anyRequest()
-                .authenticated();
-//                .and()
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .authenticated()
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 }
 }
